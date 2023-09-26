@@ -1,0 +1,4 @@
+npx react-native run android
+on vs code
+
+then run on android studio
