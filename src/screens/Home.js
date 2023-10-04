@@ -1,16 +1,33 @@
 import React,{useEffect, useState} from "react";
-import { View,Text,StyleSheet,Image } from "react-native";
-import card from "../images/card2.png"
+import { View,Text,StyleSheet, } from "react-native";
 import LottieView from "lottie-react-native";
 import tapAnimation from "../animations/tap.json"
+import nfcManager,{NfcEvents,Ndef} from "react-native-nfc-manager";
 
-function Home(props){
+function Home({navigation}){
+
+    useEffect( ()=>{
+        (async()=> {
+                 await nfcManager.registerTagEvent();
+          })();
+
+        nfcManager.setEventListener(NfcEvents.DiscoverTag,tag=>{
+            var text = Ndef.uri.decodePayload(tag.ndefMessage[0].payload);
+            text=text.slice(14)
+            nfcManager.unregisterTagEvent().catch(()=>0);
+            navigation.navigate('AttendanceHistory',{teacherId:text})
+        })
+
+        return()=>{
+            nfcManager.setEventListener(NfcEvents.DiscoverTag,null)
+        }
+    },[])
+
         return(
                 <View style={styles.wrapper}>
                     <View style={styles.logo}>
-                        <Text style={styles.logoText}>Touch-In <Text style={{fontWeight:'300',color:'#D8D9DA'}}>Time</Text></Text>
+                        <Text style={styles.logoText}>Touch-In <Text style={{fontWeight:'300',color:'#8EBBFF'}}>Time</Text></Text>
                     <LottieView source={tapAnimation} autoPlay loop style={styles.animation}/>
-                        {/* <Image source={card} style={styles.logoImage}/> */}
                     </View>
                     <View style={styles.welcomeText}>
                         <Text style={styles.tapHeader}>Welcome</Text>
@@ -24,7 +41,8 @@ function Home(props){
 const styles=StyleSheet.create({
     wrapper:{
         flex:1,
-        backgroundColor:'#42858c'
+        backgroundColor:'#F4F5Fc',
+        
     },
     logo:{
         flex:1,
@@ -42,7 +60,7 @@ const styles=StyleSheet.create({
     logoText: {
         fontSize: 50,
         fontWeight: 'bold', 
-        color: '#35393c',
+        color: '#24293e',
         marginTop:150
       },
     logoImage:{
@@ -54,13 +72,12 @@ const styles=StyleSheet.create({
     tapHeader:{
         fontSize: 40,
         fontWeight: 'bold', 
-        color: '#35393c',
-
+        color: '#24293e',
     },
     tapFooter:{
         fontSize:20,
         fontWeight: '300', 
-        color: '#D8D9DA',
+        color: '#8EBBFF',
     },
     animation:{
         height:400,

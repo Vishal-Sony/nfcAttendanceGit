@@ -1,10 +1,11 @@
 import React,{useEffect, useState} from "react";
 import nfcManager from "react-native-nfc-manager";
 import { View,Text,StyleSheet } from "react-native";
-import Game from "./Game";
-import Home from "./screens/Home";
+import AppNavigator from "./navigation/AppNavigator";
+import { NavigationContainer } from '@react-navigation/native';
+import { DataProvider } from "./DataContext";
 
-function App(props){
+function App(){
     const [hasNfc,setHasNfc]=useState(null)
 
 
@@ -23,13 +24,21 @@ function App(props){
     else if(!hasNfc){
 
         return(
+
                 <View style={styles.wrapper}>
                     <Text>Your device doesn't support NFC</Text>
                 </View>
+
         )
     }
 
-    return <Home/>
+    return(
+        <DataProvider>
+        <NavigationContainer>
+            <AppNavigator/>
+        </NavigationContainer>
+        </DataProvider>
+    ) 
 
 }
 
